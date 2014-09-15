@@ -1,10 +1,8 @@
---square :: Integer -> Integer
---square x = x * x
+--Joe Loser
+--CS4450 HW0
+--9/14/14
 
---smaller :: (Integer, Integer) -> Integer
---smaller (x, y) = if x <= y then x else y
-
-import Data.Char -- for nextlet
+import Data.Char
 
 -- takes letter of alphabet and returns the letter immediately after it (A is considered after Z)
 -- if argument is not a letter, returns the argument unchanged

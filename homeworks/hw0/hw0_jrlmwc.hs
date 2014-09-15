@@ -27,3 +27,19 @@ digitval c
 -- (b, c) from the result of applying the two functions to the argument
 twine :: (a -> b) -> (a -> c) -> a -> (b, c)
 twine f g a = (f a, g a)
+
+-- function cond where it returns x if p is true or y otherwise
+cond :: Bool -> a -> a -> a
+cond p x y 
+	| p == True = x
+	| otherwise = y
+
+-- date is represented by a tuple (day, month, year) and are all of type Int
+-- function age takes two dates
+	-- first is birthday and second is current date
+-- returns age of individual in whole years
+age :: (Int, Int, Int) -> (Int, Int, Int) -> Int
+age (birth_day, birth_month, birth_year) (current_day, current_month, current_year)
+	| (current_month >= birth_month) && (current_day >= birth_day) = current_year - birth_year
+	| (current_month >= birth_month) && (current_day < birth_day)  = current_year - birth_year - 1
+	| (current_month <= birth_month) = current_year - birth_year - 1

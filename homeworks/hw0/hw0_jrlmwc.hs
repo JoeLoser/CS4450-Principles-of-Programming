@@ -2,6 +2,8 @@
 --CS4450 HW0
 --9/14/14
 
+--module hw0_jrlmwc where
+
 import Data.Char
 
 -- takes letter of alphabet and returns the letter immediately after it (A is considered after Z)
@@ -38,6 +40,7 @@ cond p x y
 -- returns age of individual in whole years
 age :: (Int, Int, Int) -> (Int, Int, Int) -> Int
 age (birth_day, birth_month, birth_year) (current_day, current_month, current_year)
-	| (current_month >= birth_month) && (current_day >= birth_day) = current_year - birth_year
-	| (current_month >= birth_month) && (current_day < birth_day)  = current_year - birth_year - 1
-	| (current_month <= birth_month) = current_year - birth_year - 1
+	| (current_month > birth_month)   							  = current_year - birth_year
+	| (current_month < birth_month) 							  = current_year - birth_year - 1
+	| (current_month == birth_month) && (current_day > birth_day) = current_year - birth_year
+	| otherwise 												  = current_year - birth_year - 1

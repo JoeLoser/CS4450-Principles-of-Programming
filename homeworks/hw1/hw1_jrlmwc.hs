@@ -13,7 +13,13 @@ fib :: Int -> Int
 fib n
   | n <= 0= 0
   | n == 1 = 1
-  | n > 1 = fib(n-1) + fib(n-2)
+  | n > 1 = fib' 0 1 2 n
+
+-- Tail-recursive helper function.
+fib' :: Int -> Int -> Int -> Int -> Int
+fib' p'' p' i end
+      | i == end = p'' + p'
+      | otherwise = fib' p' (p'' + p') (i + 1) end
 
 -- 3. Accepts two functions f and g and an int
 munge :: (Int->Int) -> (Int -> Int) -> Int -> Int

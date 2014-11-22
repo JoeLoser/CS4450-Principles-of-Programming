@@ -33,10 +33,7 @@ or' U U = U
 
 xor' :: Bool3 -> Bool3 -> Bool3
 -- if one argument is U, then the result is always U
-xor' U _ = U -- handles the three cases below
---xor' U U = U
---xor' U F = U
---xor' U T = U
+xor' U _ = U 
 xor' T F = T
 xor' T T = F
 xor' T U = U

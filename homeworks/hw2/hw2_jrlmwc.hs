@@ -14,10 +14,7 @@ not' T = F
 not' U = U
 
 and' :: Bool3 -> Bool3 -> Bool3
-and' F _ = F -- takes care of the three cases below
---and' F F = F
---and' F T = F
---and' F U = F
+and' F _ = F 
 and' T F = F
 and' T T = T
 and' T U = U
@@ -26,10 +23,7 @@ and' U T = U
 and' U F = F
 
 or' :: Bool3 -> Bool3 -> Bool3
-or' T _ = T -- handles the three cases below
---or' T T = T
---or' T F = T
---or' T U = T
+or' T _ = T 
 or' F F = F
 or' F T = T
 or' F U = U
@@ -69,16 +63,6 @@ toTernaryR :: (a -> b -> b) -> a -> a -> b -> b
 toTernaryR f a b c = f a (f b c)
 
 -- #4.
--- Could have derived Bound and Ord and then used [minBound::Bool3] to get the constructors for Bool3
---equiv1 :: (Bool3 -> Bool3) -> (Bool3 -> Bool3) -> Bool
---equiv1 f g = map f [T,F,U] == map g [T,F,U]
-
---equiv2 :: (Bool3 -> Bool3 -> Bool3) -> (Bool3 -> Bool3 -> Bool3) -> a -> Bool
---equiv2 f g x = foldl (\acc x -> if equiv1 (f x) (g x) then acc else False) True [T,F,U]
-
---equiv3 :: (Bool3 -> Bool3 -> Bool3 -> Bool3) -> (Bool3 -> Bool3 -> Bool3 -> Bool3) -> (Bool3 -> a) -> b -> Bool
---equiv3 f g h x = foldl (\acc x -> if equiv2 (f x) (g x) (h x) then acc else False) True [T, F, U]
-
 equiv1 :: (Bool3 -> Bool3) -> (Bool3 -> Bool3) -> Bool
 equiv1 f g = 
   let vs = [T, F, U]

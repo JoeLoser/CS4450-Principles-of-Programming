@@ -2,8 +2,6 @@
 --CS4450 HW0
 --9/14/14
 
---module hw0_jrlmwc where
-
 import Data.Char
 
 -- takes letter of alphabet and returns the letter immediately after it (A is considered after Z)
@@ -34,13 +32,12 @@ cond p x y
 	| p == True = x
 	| otherwise = y
 
--- date is represented by a tuple (day, month, year) and are all of type Int
--- function age takes two dates
-	-- first is birthday and second is current date
+-- date is represented by a tuple (day, month, year)
+-- first tuple is birthday and second tuple is current dates
 -- returns age of individual in whole years
 age :: (Int, Int, Int) -> (Int, Int, Int) -> Int
-age (birth_day, birth_month, birth_year) (current_day, current_month, current_year)
-	| (current_month > birth_month)   							  = current_year - birth_year
-	| (current_month < birth_month) 							  = current_year - birth_year - 1
-	| (current_month == birth_month) && (current_day > birth_day) = current_year - birth_year
-	| otherwise 												  = current_year - birth_year - 1
+age (d, m, y) (d', m', y')
+      | m' > m = y' - y
+      | m' < m = y' - y - 1
+      | m' == m && d' >= d = y' - y
+      | m' == m && d' < d = y' - y - 1

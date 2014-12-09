@@ -1,0 +1,15 @@
+let fibindex := 15 in {
+  let fib0 := 1 in {
+    let fib1 := 1 in {
+      let tmp := 0 in {
+        while (fibindex > 0) {
+          tmp := fib0;
+          fib0 := fib1;
+          fib1 := fib1 + tmp;
+          fibindex := fibindex - 1;
+        }
+      }
+      return fib0;
+    }
+  }
+}

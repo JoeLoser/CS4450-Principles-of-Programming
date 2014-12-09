@@ -1,0 +1,9 @@
+let factindex := 6 in {
+  let result := 1 in {
+    while (factindex > 0) {
+      result := factindex * result;
+      factindex := factindex - 1;
+    }
+    return result;
+  }
+}

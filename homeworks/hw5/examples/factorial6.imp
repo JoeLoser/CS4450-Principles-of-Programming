@@ -1,7 +1,0 @@
-factindex := 6;
-result := 1;
-
-while (factindex > 0) {
-  result := factindex * result;
-  factindex := factindex - 1;
-}

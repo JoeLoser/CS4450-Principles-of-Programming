@@ -183,52 +183,62 @@ stmts (st:sts) r s = stmts sts r (snd (stmt st r s))
 -- Added functionality for prettyPrint which maps over the function definitions and statements and concatenates them together to form a String
 prettyPrint ::  Prog -> String
 prettyPrint (functionDefinitions, statements) = 
-  (concatMap parseFunction functionDefinitions) ++ (concatMap parseStatements statements)
+  parseFunctionDefs functionDefinitions ++ parseStatements statements
+
+
+parseFunctionDefs :: [FunDefn] -> String
+parseFunctionDefs = concatMap parseFunctionDef
 
 -- Helper function to parse FunDefn and turn them into a String by decomposing the tuple and working with that
-parseFunction :: FunDefn -> String
-parseFunction (nameOfFunction, parameterList, body) = 
-  nameOfFunction ++ (parseParameters parameterList) ++ (concatMap parseStatements body)
+parseFunctionDef :: FunDefn -> String
+parseFunctionDef (nameOfFunction, parameterList, body) = 
+  "function " ++ nameOfFunction ++ "(" ++ parseParameters parameterList ++ "){" ++ parseStatements body ++ "}"
 
 -- Helper function used to concatenate a list of Strings split by comma
 parseParameters :: [Name] -> String
 parseParameters params = intercalate "," params
 
+parseStatements :: [Stmt] -> String
+parseStatements = concatMap parseStatement
+
 -- Main part of prettyPrint -- will parse a statement and build a String out of it
--- parseStatements will manually add the semi colons for the statements that need them (i.e. Assign  and Return)
-parseStatements :: Stmt -> String
-parseStatements (Assign name e) = name ++ ":=" ++ (parseExpression e) ++ ";"
+-- parseStatement will manually add the semi colons for the statements that need them (i.e. Assign  and Return)
+parseStatement :: Stmt -> String
+parseStatement (Assign name e) = name ++ ":=" ++ parseExpression e ++ ";"
   -- Can just always assume else statement(s) since could be empty and we won't have to worry :D
   -- Need to add the semi colon at the end of each statement since intercalate only covers the semi
   -- colons between the list of statements
-parseStatements (If x y z) = 
-  "if(" ++ (parseBinaryExp x) ++ ") { " ++ (concatMap parseStatements y) ++ "}else{" ++ (concatMap parseStatements z) ++ "}"
-parseStatements (While b ss) = "while(" ++ parseBinaryExp b ++ "){" ++ (concatMap parseStatements ss) ++ ";}"
-parseStatements (Let n e ss) = "let " ++ n ++ ":= " ++ parseExpression e ++ "in {" ++ (concatMap parseStatements ss) ++ ";}"
-parseStatements (Case e pairs) = "case " ++ parseExpression e ++ " {" ++ (concatMap parsePair pairs) ++ "}"
+parseStatement (If x y z) = 
+  "if(" ++ parseBinaryExp x ++ "){" ++ parseStatements y ++ "}else{" ++ parseStatements z ++ "}"
+parseStatement (While b ss) = "while(" ++ parseBinaryExp b ++ "){" ++ parseStatements ss ++ "}"
+parseStatement (Let n e ss) = "let " ++ n ++ ":= " ++ parseExpression e ++ "in{" ++ parseStatements ss ++ "}"
+parseStatement (Case e cases) = "case " ++ parseExpression e ++ "{" ++ (concatMap parseCase cases) ++ "}"
 -- Need to use init on the last statement since I manually add semi colons and I do not want a semi colon for the last statement in for loop
 -- since it is not valid syntax then
 -- I should probably make sure that the statements s1 and s2 are really Assign statements otherwise throw an Error, but I am putting it on the
 -- user. If they're using my Interp, surely they know how to write a for loop :)
-parseStatements (For s1 b s2 ss) = 
-  "for (" ++ parseStatements s1  ++ parseBinaryExp b ++ init (parseStatements s2) ++ ") {" ++ (concatMap parseStatements ss) ++ "}"
-parseStatements (Return e) = "return " ++ parseExpression e ++ ";"
+parseStatement (For s1 b s2 ss) =  "for (" ++ parseFor s1 b s2 ++ "){" ++ parseStatements ss ++ "}"
+parseStatement (Return e) = "return " ++ parseExpression e ++ ";"
+
+parseFor :: Stmt -> BExp -> Stmt -> String
+parseFor s1 b s2 = parseStatement s1 ++ parseBinaryExp b ++ ";" ++ init (parseStatement s2)
 
 -- Used to help parse Case statements
-parsePair :: (Int, [Stmt]) -> String
-parsePair (x, ys) = show x ++ (concatMap parseStatements ys)
+parseCase :: (Int, [Stmt]) -> String
+parseCase (x, ys) = show x ++ "{" ++ parseStatements ys ++ "}"
 
 -- Helper function used to parse BExp
 parseBinaryExp :: BExp -> String
 parseBinaryExp (IsEq x y) = parseExpression x ++ "==" ++ parseExpression y
 parseBinaryExp (IsNEq x y) = parseExpression x ++ "!=" ++ parseExpression y
 parseBinaryExp (IsGT x y) = parseExpression x ++ ">" ++ parseExpression y
+parseBinaryExp (IsLT x y) = parseExpression x ++ "<" ++ parseExpression y
 parseBinaryExp (IsGTE x y) = parseExpression x ++ ">=" ++ parseExpression y
 parseBinaryExp (IsLTE x y) = parseExpression x ++ "<=" ++ parseExpression y
 parseBinaryExp (And x y) = parseBinaryExp x ++ "&&" ++ parseBinaryExp y
 parseBinaryExp (Or x y) = parseBinaryExp x ++ "||" ++ parseBinaryExp y
-parseBinaryExp (Not x) = "!" ++ parseBinaryExp x
-parseBinaryExp (LitBool b) = if (b) then "true" else "false"
+parseBinaryExp (Not x) = "!" ++ "(" ++ parseBinaryExp x ++ ")"
+parseBinaryExp (LitBool b) = if b then "true" else "false"
 
 -- Helper function to parse Exp
 parseExpression :: Exp -> String
@@ -238,7 +248,7 @@ parseExpression (Mul x y) = parseExpression x ++ "*" ++ parseExpression y
 parseExpression (Neg x) = "-" ++ parseExpression x
 parseExpression (Var x) = x
 parseExpression (LitInt x) = show x
-parseExpression (FunCall x exps) = x ++ (parseExpList exps)
+parseExpression (FunCall x exps) = x ++ "(" ++ parseExpList exps ++ ")"
 
 -- Helper function to parse a list of Exp
 parseExpList :: [Exp] -> String
